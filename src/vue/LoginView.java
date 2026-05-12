@@ -40,7 +40,6 @@ public class LoginView extends JFrame {
     private JPanel creerPanneau() {
         JPanel root = new JPanel(new GridBagLayout());
         root.setBackground(UITheme.BG);
-        // Fond avec texture subtile (grille de points)
         root.setBackground(UITheme.BG);
 
         JPanel card = new JPanel(new BorderLayout(0, 0));
@@ -51,17 +50,14 @@ public class LoginView extends JFrame {
             new EmptyBorder(0, 0, 0, 0)
         ));
 
-        // ── En-tête de la carte ──────────────────────────────────────────────
         JPanel topBar = new JPanel(new BorderLayout()) {
             @Override
             protected void paintComponent(Graphics g) {
                 super.paintComponent(g);
                 Graphics2D g2 = (Graphics2D) g;
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                // Fond foncé premium
                 g2.setColor(new Color(14, 16, 22));
                 g2.fillRect(0, 0, getWidth(), getHeight());
-                // Grille de points décorative
                 g2.setColor(new Color(196, 160, 80, 18));
                 for (int x = 0; x < getWidth(); x += 18) {
                     for (int y = 0; y < getHeight(); y += 18) {
@@ -78,7 +74,6 @@ public class LoginView extends JFrame {
         logoArea.setLayout(new BoxLayout(logoArea, BoxLayout.Y_AXIS));
         logoArea.setOpaque(false);
 
-        // Carré décoratif Or
         JLabel cross = new JLabel("✚");
         cross.setFont(new Font("Segoe UI", Font.BOLD, 22));
         cross.setForeground(UITheme.PRIMARY);
@@ -106,7 +101,6 @@ public class LoginView extends JFrame {
         accentLine.setPreferredSize(new Dimension(0, 2));
         topBar.add(accentLine, BorderLayout.SOUTH);
 
-        // ── Corps du formulaire ──────────────────────────────────────────────
         JPanel form = new JPanel();
         form.setLayout(new BoxLayout(form, BoxLayout.Y_AXIS));
         form.setBackground(UITheme.CARD_BG);

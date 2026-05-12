@@ -59,14 +59,12 @@ public class OrdonnanceView extends JFrame {
         panel.setBackground(UITheme.CARD_BG);
         panel.setBorder(UITheme.cardBorder());
 
-        // ── Titre ────────────────────────────────────────────────────────────
         JLabel titre = UITheme.labelGold("Ordonnances");
         titre.setBorder(BorderFactory.createCompoundBorder(
             new MatteBorder(0, 0, 1, 0, UITheme.BORDER),
             new EmptyBorder(0, 0, 12, 0)
         ));
 
-        // ── Formulaire : 3 champs sur une ligne ──────────────────────────────
         JPanel form = new JPanel(new GridLayout(1, 3, 12, 0));
         form.setOpaque(false);
         txtNumOrd   = UITheme.textField();
@@ -76,7 +74,6 @@ public class OrdonnanceView extends JFrame {
         form.add(creerChamp("ID client", txtIdClient));
         form.add(creerChamp("Date (AAAA-MM-JJ)", txtDate));
 
-        // ── Boutons Ajouter / Supprimer ──────────────────────────────────────
         JPanel actionsOrd = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 6));
         actionsOrd.setOpaque(false);
         btnAjouterOrd   = UITheme.primaryButton("Ajouter");
@@ -86,13 +83,11 @@ public class OrdonnanceView extends JFrame {
         actionsOrd.add(btnAjouterOrd);
         actionsOrd.add(btnSupprimerOrd);
 
-        // ── Bloc formulaire + boutons (zone NORTH du panel principal) ────────
         JPanel topArea = new JPanel(new BorderLayout(0, 6));
         topArea.setOpaque(false);
         topArea.add(form, BorderLayout.CENTER);
         topArea.add(actionsOrd, BorderLayout.SOUTH);
 
-        // ── Recherche client ─────────────────────────────────────────────────
         JPanel rech = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 4));
         rech.setOpaque(false);
         txtRechercheClient = UITheme.textField();
@@ -103,7 +98,6 @@ public class OrdonnanceView extends JFrame {
         rech.add(txtRechercheClient);
         rech.add(btnRech);
 
-        // ── Table ordonnances ────────────────────────────────────────────────
         modelOrd = new DefaultTableModel(new String[]{"N° Ord", "ID Client", "Date"}, 0) {
             @Override public boolean isCellEditable(int r, int c) { return false; }
         };
@@ -113,15 +107,14 @@ public class OrdonnanceView extends JFrame {
         scroll.setBorder(BorderFactory.createLineBorder(UITheme.BORDER, 1));
         scroll.getViewport().setBackground(UITheme.CARD_BG);
 
-        // ── Zone centrale : recherche + table (prend tout l'espace restant) ──
         JPanel centreArea = new JPanel(new BorderLayout(0, 8));
         centreArea.setOpaque(false);
         centreArea.add(rech, BorderLayout.NORTH);
         centreArea.add(scroll, BorderLayout.CENTER);
 
         panel.add(titre, BorderLayout.NORTH);
-        panel.add(topArea, BorderLayout.NORTH); // remplacé ci-dessous via compound
-        // On utilise un wrapper NORTH pour empiler titre + formulaire
+        panel.add(topArea, BorderLayout.NORTH); 
+        
         JPanel northWrapper = new JPanel(new BorderLayout(0, 10));
         northWrapper.setOpaque(false);
         northWrapper.add(titre, BorderLayout.NORTH);
@@ -131,7 +124,6 @@ public class OrdonnanceView extends JFrame {
         panel.add(northWrapper, BorderLayout.NORTH);
         panel.add(centreArea, BorderLayout.CENTER);
 
-        // ── Événements ───────────────────────────────────────────────────────
         btnAjouterOrd.addActionListener(e -> ajouterOrdonnance());
         btnSupprimerOrd.addActionListener(e -> supprimerOrdonnance());
         btnRech.addActionListener(e ->
@@ -151,14 +143,12 @@ public class OrdonnanceView extends JFrame {
         panel.setBackground(UITheme.CARD_BG);
         panel.setBorder(UITheme.cardBorder());
 
-        // ── Titre ────────────────────────────────────────────────────────────
         JLabel titre = UITheme.labelGold("Lignes d'ordonnance");
         titre.setBorder(BorderFactory.createCompoundBorder(
             new MatteBorder(0, 0, 1, 0, UITheme.BORDER),
             new EmptyBorder(0, 0, 12, 0)
         ));
 
-        // ── Formulaire : 2 champs ────────────────────────────────────────────
         JPanel form = new JPanel(new GridLayout(1, 2, 12, 0));
         form.setOpaque(false);
         txtLigneIdMed = UITheme.textField();
@@ -166,7 +156,6 @@ public class OrdonnanceView extends JFrame {
         form.add(creerChamp("ID médicament", txtLigneIdMed));
         form.add(creerChamp("Quantité", txtLigneQte));
 
-        // ── Boutons Ajouter / Modifier / Supprimer ───────────────────────────
         JPanel actionsLigne = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 6));
         actionsLigne.setOpaque(false);
         btnAjouterLigne   = UITheme.primaryButton("Ajouter");
@@ -179,13 +168,11 @@ public class OrdonnanceView extends JFrame {
         actionsLigne.add(btnModifierLigne);
         actionsLigne.add(btnSupprimerLigne);
 
-        // ── Bloc formulaire + boutons (zone NORTH) ───────────────────────────
         JPanel topArea = new JPanel(new BorderLayout(0, 6));
         topArea.setOpaque(false);
         topArea.add(form, BorderLayout.CENTER);
         topArea.add(actionsLigne, BorderLayout.SOUTH);
 
-        // ── Table lignes ─────────────────────────────────────────────────────
         modelLignes = new DefaultTableModel(new String[]{"N° Ord", "ID Méd", "Quantité"}, 0) {
             @Override public boolean isCellEditable(int r, int c) { return false; }
         };
@@ -195,20 +182,17 @@ public class OrdonnanceView extends JFrame {
         scroll.setBorder(BorderFactory.createLineBorder(UITheme.BORDER, 1));
         scroll.getViewport().setBackground(UITheme.CARD_BG);
 
-        // ── Coût total (sous la table) ───────────────────────────────────────
         lblCoutTotal = new JLabel("Coût total : 0.00 DT");
         lblCoutTotal.setFont(new Font("Segoe UI", Font.BOLD, 14));
         lblCoutTotal.setForeground(UITheme.PRIMARY);
         lblCoutTotal.setHorizontalAlignment(SwingConstants.RIGHT);
         lblCoutTotal.setBorder(new EmptyBorder(10, 0, 0, 4));
 
-        // ── Zone centrale : table + coût (prend tout l'espace restant) ───────
         JPanel centreArea = new JPanel(new BorderLayout(0, 0));
         centreArea.setOpaque(false);
         centreArea.add(scroll, BorderLayout.CENTER);
         centreArea.add(lblCoutTotal, BorderLayout.SOUTH);
 
-        // ── Wrapper NORTH : titre + formulaire/boutons ───────────────────────
         JPanel northWrapper = new JPanel(new BorderLayout(0, 10));
         northWrapper.setOpaque(false);
         northWrapper.add(titre, BorderLayout.NORTH);

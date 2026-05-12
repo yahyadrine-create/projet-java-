@@ -11,34 +11,23 @@ import java.util.List;
 import controleur.UtilisateurControleur;
 import model.Utilisateur;
 
-/**
- * Vue (V) — Gestion des utilisateurs (pharmaciens + administrateurs).
- * Respecte le pattern MVC : aucune requête SQL directe ici.
- * Design cohérent avec UITheme (palette anthracite & or).
- */
+
 public class UtilisateurView extends JFrame {
 
-    // ── Contrôleur ────────────────────────────────────────────────────────────
     private final UtilisateurControleur controleur;
 
-    // ── Composants du formulaire ───────────────────────────────────────────────
     private JTextField txtCin, txtNom, txtPrenom, txtTel, txtLogin;
     private JPasswordField txtMotDePasse;
     private JComboBox<String> cbRole;
 
-    // ── Table ─────────────────────────────────────────────────────────────────
     private JTable table;
     private DefaultTableModel tableModel;
 
-    // ── Recherche ─────────────────────────────────────────────────────────────
     private JTextField txtRecherche;
 
-    // ── Boutons ───────────────────────────────────────────────────────────────
     private JButton btnAjouter, btnModifier, btnSupprimer, btnVider, btnFermer;
 
-    // =========================================================================
-    // CONSTRUCTEUR
-    // =========================================================================
+    
     public UtilisateurView(Connection connection) {
         this.controleur = new UtilisateurControleur(connection);
         UITheme.applyGlobalDefaults();
@@ -61,9 +50,6 @@ public class UtilisateurView extends JFrame {
         setVisible(true);
     }
 
-    // =========================================================================
-    // CORPS PRINCIPAL
-    // =========================================================================
     private JPanel creerCorps() {
         JPanel corps = new JPanel(new BorderLayout(0, 16));
         corps.setBackground(UITheme.BG);
@@ -75,20 +61,17 @@ public class UtilisateurView extends JFrame {
         return corps;
     }
 
-    // ── Carte Formulaire ──────────────────────────────────────────────────────
     private JPanel creerFormulaireCard() {
         JPanel card = new JPanel(new BorderLayout(0, 14));
         card.setBackground(UITheme.CARD_BG);
         card.setBorder(UITheme.cardBorder());
 
-        // Titre section
         JLabel titre = UITheme.labelGold("Informations utilisateur");
         titre.setBorder(BorderFactory.createCompoundBorder(
             new MatteBorder(0, 0, 1, 0, UITheme.BORDER),
             new EmptyBorder(0, 0, 12, 0)
         ));
 
-        // Ligne 1 : CIN | Nom | Prénom | Téléphone
         JPanel ligne1 = new JPanel(new GridLayout(1, 4, 14, 0));
         ligne1.setOpaque(false);
 
@@ -102,7 +85,6 @@ public class UtilisateurView extends JFrame {
         ligne1.add(creerChamp("Prénom *", txtPrenom));
         ligne1.add(creerChamp("Téléphone *", txtTel));
 
-        // Ligne 2 : Login | Mot de passe | Rôle | (vide)
         JPanel ligne2 = new JPanel(new GridLayout(1, 4, 14, 0));
         ligne2.setOpaque(false);
 
@@ -113,9 +95,8 @@ public class UtilisateurView extends JFrame {
         ligne2.add(creerChamp("Login *", txtLogin));
         ligne2.add(creerChamp("Mot de passe *", txtMotDePasse));
         ligne2.add(creerChamp("Rôle *", cbRole));
-        ligne2.add(new JPanel() {{ setOpaque(false); }}); // cellule vide
+        ligne2.add(new JPanel() {{ setOpaque(false); }}); 
 
-        // Assemblage
         JPanel fields = new JPanel(new GridLayout(2, 1, 0, 10));
         fields.setOpaque(false);
         fields.add(ligne1);
@@ -126,7 +107,6 @@ public class UtilisateurView extends JFrame {
         return card;
     }
 
-    // ── Carte Table ───────────────────────────────────────────────────────────
     private JPanel creerTableCard() {
         JPanel card = new JPanel(new BorderLayout(0, 0));
         card.setBackground(UITheme.CARD_BG);
@@ -138,7 +118,6 @@ public class UtilisateurView extends JFrame {
             new EmptyBorder(0, 0, 12, 0)
         ));
 
-        // Modèle de table
         tableModel = new DefaultTableModel(
             new String[]{"CIN", "Nom", "Prénom", "Téléphone", "Login", "Rôle"}, 0) {
             @Override public boolean isCellEditable(int r, int c) { return false; }
@@ -146,7 +125,6 @@ public class UtilisateurView extends JFrame {
         table = new JTable(tableModel);
         UITheme.styleTable(table);
 
-        // Colonne "Rôle" colorée via renderer personnalisé
         table.getColumnModel().getColumn(5).setCellRenderer(
             new javax.swing.table.DefaultTableCellRenderer() {
                 @Override
@@ -182,9 +160,7 @@ public class UtilisateurView extends JFrame {
         return card;
     }
 
-    // =========================================================================
-    // BARRE DU BAS
-    // =========================================================================
+   
     private JPanel creerBas() {
         JPanel bas = new JPanel(new BorderLayout());
         bas.setBackground(new Color(14, 16, 22));
@@ -193,7 +169,6 @@ public class UtilisateurView extends JFrame {
             new EmptyBorder(12, 22, 12, 22)
         ));
 
-        // ── Recherche ────────────────────────────────────────────────────────
         JPanel recherche = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0));
         recherche.setOpaque(false);
         txtRecherche = UITheme.textField();
@@ -201,7 +176,6 @@ public class UtilisateurView extends JFrame {
         recherche.add(UITheme.label("🔍  Rechercher par nom :"));
         recherche.add(txtRecherche);
 
-        // ── Boutons ───────────────────────────────────────────────────────────
         JPanel boutons = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 0));
         boutons.setOpaque(false);
 
@@ -224,9 +198,6 @@ public class UtilisateurView extends JFrame {
         return bas;
     }
 
-    // =========================================================================
-    // ÉVÉNEMENTS
-    // =========================================================================
     private void configurerEvenements() {
         btnAjouter.addActionListener(e   -> ajouter());
         btnModifier.addActionListener(e  -> modifier());
@@ -242,15 +213,11 @@ public class UtilisateurView extends JFrame {
         });
     }
 
-    // =========================================================================
-    // ACTIONS CRUD
-    // =========================================================================
     private void ajouter() {
         try {
             Utilisateur u = lireFormulaire();
             if (u == null) return;
 
-            // Vérification CIN déjà existant
             if (controleur.getParId(u.getCin()) != null) {
                 showErreur("Ce CIN est déjà utilisé.");
                 return;
@@ -306,11 +273,7 @@ public class UtilisateurView extends JFrame {
         }
     }
 
-    // =========================================================================
-    // UTILITAIRES PRIVÉS
-    // =========================================================================
 
-    /** Charge tous les utilisateurs dans la table. */
     private void chargerDonnees() {
         tableModel.setRowCount(0);
         for (Utilisateur u : controleur.getTous()) {
@@ -321,7 +284,6 @@ public class UtilisateurView extends JFrame {
         }
     }
 
-    /** Filtre la table en fonction du champ de recherche. */
     private void rechercher() {
         String q = txtRecherche.getText() == null ? "" : txtRecherche.getText().trim();
         tableModel.setRowCount(0);
@@ -333,7 +295,6 @@ public class UtilisateurView extends JFrame {
         }
     }
 
-    /** Remplit les champs du formulaire depuis la ligne sélectionnée. */
     private void remplirChamps() {
         int row = table.getSelectedRow();
         if (row < 0) return;
@@ -342,12 +303,11 @@ public class UtilisateurView extends JFrame {
         txtPrenom.setText(tableModel.getValueAt(row, 2).toString());
         txtTel.setText(tableModel.getValueAt(row, 3).toString());
         txtLogin.setText(tableModel.getValueAt(row, 4).toString());
-        txtMotDePasse.setText(""); // Sécurité : ne jamais pré-remplir le mot de passe
+        txtMotDePasse.setText(""); 
         String role = tableModel.getValueAt(row, 5).toString().toLowerCase();
         cbRole.setSelectedItem("administrateur".equals(role) ? "administrateur" : "pharmacien");
     }
 
-    /** Vide tous les champs du formulaire et désélectionne la table. */
     private void viderChamps() {
         txtCin.setText(""); txtNom.setText(""); txtPrenom.setText("");
         txtTel.setText(""); txtLogin.setText(""); txtMotDePasse.setText("");
@@ -355,10 +315,7 @@ public class UtilisateurView extends JFrame {
         table.clearSelection();
     }
 
-    /**
-     * Lit et valide les données du formulaire.
-     * @return un objet Utilisateur ou null si validation échouée.
-     */
+   
     private Utilisateur lireFormulaire() {
         String cinStr  = txtCin.getText().trim();
         String nom     = txtNom.getText().trim();
@@ -374,20 +331,16 @@ public class UtilisateurView extends JFrame {
             return null;
         }
 
-        int cin = Integer.parseInt(cinStr);   // peut lever NumberFormatException
+        int cin = Integer.parseInt(cinStr);   
         int tel = Integer.parseInt(telStr);
 
-        // En modification, le mot de passe peut rester vide (on garde l'ancien)
-        // La DAO update() ne modifie pas le passwd si vide — ici on force une valeur
-        // Pour simplifier, on exige le mot de passe à la création uniquement.
-        // Si vide en modification, on récupère l'ancien depuis la BDD.
+        
         if (mdp.isEmpty()) {
             int row = table.getSelectedRow();
             if (row < 0) {
                 showErreur("Le mot de passe est obligatoire pour la création.");
                 return null;
             }
-            // Récupère le mdp actuel depuis la BDD
             Utilisateur existant = controleur.getParId(cin);
             if (existant != null) mdp = existant.getPasswd() != null ? existant.getPasswd() : "";
         }
@@ -395,7 +348,6 @@ public class UtilisateurView extends JFrame {
         return new Utilisateur(cin, nom, prenom, mdp, tel, login, role);
     }
 
-    // ── Helpers UI ────────────────────────────────────────────────────────────
 
     private JPanel creerChamp(String label, JComponent field) {
         JPanel p = new JPanel(new BorderLayout(0, 5));

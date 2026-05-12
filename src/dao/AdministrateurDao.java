@@ -248,9 +248,7 @@ public class AdministrateurDao implements Idao<Administrateur> {
         return list;
     }
 
-    // =========================================================================
-    // UTILITAIRES PRIVÉS
-    // =========================================================================
+    
 
     private int queryInt(String sql) {
         try (Statement st = connection.createStatement();

@@ -31,9 +31,6 @@ public class AdministrateurView extends JFrame {
         setVisible(true);
     }
 
-    // =========================================================================
-    // ONGLETS
-    // =========================================================================
     private JTabbedPane creerOnglets() {
         JTabbedPane tabs = new JTabbedPane();
         tabs.setBackground(UITheme.BG);
@@ -44,48 +41,45 @@ public class AdministrateurView extends JFrame {
         return tabs;
     }
 
-    // =========================================================================
-    // MENU — grille 2×3 (6 tuiles)
-    // =========================================================================
     private JPanel creerMenu() {
-        // 2 lignes × 3 colonnes pour loger la nouvelle tuile Utilisateurs
         JPanel menuPanel = new JPanel(new GridLayout(2, 3, 20, 20));
         menuPanel.setBackground(UITheme.BG);
         menuPanel.setBorder(new EmptyBorder(32, 42, 32, 42));
 
         JButton btnClients      = creerTuile("Gestion des clients",
-                "Ajouter, modifier et consulter les clients",        "👥", UITheme.PRIMARY);
+                "Ajouter, modifier et consulter les clients", "👥", UITheme.PRIMARY);
         JButton btnMeds         = creerTuile("Gestion des médicaments",
-                "Catalogue et informations produits",                 "💊", UITheme.ACCENT);
+                "Catalogue et informations produits", "💊", UITheme.ACCENT);
         JButton btnStock        = creerTuile("Gestion des stocks",
-                "Niveaux de stock et alertes critiques",              "📦", UITheme.WARNING);
-        JButton btnOrdonnances  = creerTuile("Gestion des ordonnances",
-                "Créer et gérer les ordonnances",                     "🧾", new Color(160, 90, 200));
+                "Niveaux de stock et alertes critiques", "📦", UITheme.WARNING);
         JButton btnUtilisateurs = creerTuile("Gestion des utilisateurs",
-                "Comptes pharmaciens et administrateurs",             "🔑", new Color(80, 160, 220));
+                "Comptes pharmaciens et administrateurs", "🔑", new Color(80, 160, 220));
         JButton btnLogout       = creerTuile("Déconnexion",
-                "Quitter la session en cours",                        "🔒", UITheme.DANGER);
+                "Quitter la session en cours", "🔒", UITheme.DANGER);
 
         menuPanel.add(btnClients);
         menuPanel.add(btnMeds);
         menuPanel.add(btnStock);
-        menuPanel.add(btnOrdonnances);
         menuPanel.add(btnUtilisateurs);
         menuPanel.add(btnLogout);
+        menuPanel.add(new JPanel() {{ setOpaque(false); }});
 
         btnClients.addActionListener(e      -> new ClientView(controle.getConnection()).setVisible(true));
         btnMeds.addActionListener(e         -> new MedicamentView(controle.getConnection()).setVisible(true));
         btnStock.addActionListener(e        -> new MedicamentView(controle.getConnection()).setVisible(true));
-        btnOrdonnances.addActionListener(e  -> new OrdonnanceView(controle.getConnection()).setVisible(true));
         btnUtilisateurs.addActionListener(e -> new UtilisateurView(controle.getConnection()).setVisible(true));
-        btnLogout.addActionListener(e       -> confirmerDeconnexion());
+        btnLogout.addActionListener(e       -> {
+            int ok = JOptionPane.showConfirmDialog(this,
+                    "Voulez-vous vous déconnecter ?", "Déconnexion", JOptionPane.YES_NO_OPTION);
+            if (ok == JOptionPane.YES_OPTION) {
+                dispose();
+                new LoginView(controle.getConnection()).setVisible(true);
+            }
+        });
 
         return menuPanel;
     }
 
-    // =========================================================================
-    // DASHBOARD
-    // =========================================================================
     private JPanel creerDashboard() {
         JPanel root = new JPanel(new BorderLayout(0, 0));
         root.setBackground(UITheme.BG);
@@ -99,13 +93,13 @@ public class AdministrateurView extends JFrame {
         JPanel kpiRow = new JPanel(new GridLayout(1, 4, 16, 0));
         kpiRow.setOpaque(false);
         kpiRow.setBorder(new EmptyBorder(0, 0, 18, 0));
-        kpiRow.add(creerKpiCard("Médicaments",  String.valueOf(nbMeds),
+        kpiRow.add(creerKpiCard("Medicaments",    String.valueOf(nbMeds),
                 "références en catalogue",   UITheme.ACCENT));
-        kpiRow.add(creerKpiCard("Clients",      String.valueOf(nbClt),
+        kpiRow.add(creerKpiCard("Clients",        String.valueOf(nbClt),
                 "clients enregistrés",       UITheme.PRIMARY));
-        kpiRow.add(creerKpiCard("Ordonnances",  String.valueOf(nbOrd),
+        kpiRow.add(creerKpiCard("Ordonnances",    String.valueOf(nbOrd),
                 "ordonnances émises",        new Color(160, 90, 200)));
-        kpiRow.add(creerKpiCard("CA Total",     String.format("%.2f DT", caTotal),
+        kpiRow.add(creerKpiCard("CA Total",       String.format("%.2f DT", caTotal),
                 "chiffre d'affaires cumulé", UITheme.SUCCESS));
 
         List<String[]> topVentes = controle.getTopVentes(5);
@@ -120,46 +114,11 @@ public class AdministrateurView extends JFrame {
                 "Chiffre d'affaires par mois",
                 creerGraphiqueCA(caParMois)));
 
-        root.add(kpiRow,    BorderLayout.NORTH);
-        root.add(chartsRow, BorderLayout.CENTER);
+        root.add(kpiRow,     BorderLayout.NORTH);
+        root.add(chartsRow,  BorderLayout.CENTER);
         return root;
     }
 
-    // =========================================================================
-    // FOOTER — bouton Déconnexion stylisé (rouge, arrondi, bord droit)
-    // =========================================================================
-    private Component creerFooter() {
-        JPanel footer = new JPanel(new BorderLayout());
-        footer.setBackground(new Color(14, 16, 22));
-        footer.setBorder(BorderFactory.createCompoundBorder(
-            UITheme.sectionDividerTop(),
-            new EmptyBorder(10, 20, 10, 20)
-        ));
-
-        // Libellé version à gauche
-        JLabel version = new JLabel("PharmaPro v1.0  •  Administrateur");
-        version.setFont(UITheme.SMALL);
-        version.setForeground(UITheme.TEXT_DIM);
-        footer.add(version, BorderLayout.WEST);
-        return footer;
-    }
-
-    // =========================================================================
-    // DÉCONNEXION
-    // =========================================================================
-    private void confirmerDeconnexion() {
-        int ok = JOptionPane.showConfirmDialog(this,
-                "Voulez-vous vous déconnecter ?", "Déconnexion",
-                JOptionPane.YES_NO_OPTION);
-        if (ok == JOptionPane.YES_OPTION) {
-            dispose();
-            new LoginView(controle.getConnection()).setVisible(true);
-        }
-    }
-
-    // =========================================================================
-    // CARTE KPI
-    // =========================================================================
     private JPanel creerKpiCard(String titre, String valeur, String sous, Color couleur) {
         JPanel card = new JPanel(new BorderLayout(0, 6));
         card.setBackground(UITheme.CARD_BG);
@@ -203,9 +162,6 @@ public class AdministrateurView extends JFrame {
         return card;
     }
 
-    // =========================================================================
-    // WRAPPER CARTE GRAPHIQUE
-    // =========================================================================
     private JPanel creerCardGraphique(String titre, JComponent graphique) {
         JPanel card = new JPanel(new BorderLayout(0, 14));
         card.setBackground(UITheme.CARD_BG);
@@ -221,9 +177,6 @@ public class AdministrateurView extends JFrame {
         return card;
     }
 
-    // =========================================================================
-    // GRAPHIQUE 1 : BARRES HORIZONTALES — TOP 5 VENTES
-    // =========================================================================
     private JComponent creerGraphiqueTopVentes(final List<String[]> data) {
         JPanel panel = new JPanel() {
             @Override
@@ -308,9 +261,6 @@ public class AdministrateurView extends JFrame {
         return panel;
     }
 
-    // =========================================================================
-    // GRAPHIQUE 2 : COURBE LISSÉE — CA PAR MOIS
-    // =========================================================================
     private JComponent creerGraphiqueCA(final List<String[]> data) {
         JPanel panel = new JPanel() {
             @Override
@@ -424,9 +374,20 @@ public class AdministrateurView extends JFrame {
         return panel;
     }
 
-    // =========================================================================
-    // TUILE MENU
-    // =========================================================================
+    private JPanel creerFooter() {
+        JPanel footer = new JPanel(new BorderLayout());
+        footer.setBackground(new Color(14, 16, 22));
+        footer.setBorder(UITheme.sectionDividerTop());
+
+        JLabel version = new JLabel("PharmaPro v1.0  •  Administrateur");
+        version.setFont(UITheme.SMALL);
+        version.setForeground(UITheme.TEXT_DIM);
+        version.setBorder(new EmptyBorder(12, 20, 12, 20));
+        footer.add(version, BorderLayout.WEST);
+
+        return footer;
+    }
+
     private JButton creerTuile(String titre, String description, String icone, Color couleur) {
         JButton b = new JButton() {
             @Override
@@ -452,10 +413,10 @@ public class AdministrateurView extends JFrame {
         JPanel content = new JPanel();
         content.setLayout(new BoxLayout(content, BoxLayout.Y_AXIS));
         content.setOpaque(false);
-        content.setBorder(new EmptyBorder(22, 24, 22, 20));
+        content.setBorder(new EmptyBorder(26, 24, 26, 20));
 
         JLabel iconeLabel = new JLabel(icone);
-        iconeLabel.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 28));
+        iconeLabel.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 30));
         iconeLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         JLabel titreLabel = new JLabel(titre);
@@ -474,11 +435,11 @@ public class AdministrateurView extends JFrame {
         badge.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         content.add(iconeLabel);
-        content.add(Box.createVerticalStrut(12));
+        content.add(Box.createVerticalStrut(14));
         content.add(titreLabel);
-        content.add(Box.createVerticalStrut(4));
+        content.add(Box.createVerticalStrut(5));
         content.add(descLabel);
-        content.add(Box.createVerticalStrut(8));
+        content.add(Box.createVerticalStrut(10));
         content.add(badge);
         b.add(content, BorderLayout.CENTER);
 

@@ -40,7 +40,6 @@ public class ClientView extends JFrame {
         corps.setBackground(UITheme.BG);
         corps.setBorder(new EmptyBorder(18, 22, 0, 22));
 
-        // ── Formulaire ──────────────────────────────────────────────────────
         JPanel formCard = new JPanel(new BorderLayout(0, 14));
         formCard.setBackground(UITheme.CARD_BG);
         formCard.setBorder(UITheme.cardBorder());
@@ -72,7 +71,6 @@ public class ClientView extends JFrame {
         formCard.add(fields, BorderLayout.CENTER);
         corps.add(formCard, BorderLayout.NORTH);
 
-        // ── Table ───────────────────────────────────────────────────────────
         JPanel tableCard = new JPanel(new BorderLayout());
         tableCard.setBackground(UITheme.CARD_BG);
         tableCard.setBorder(UITheme.cardBorder());
@@ -111,7 +109,6 @@ public class ClientView extends JFrame {
             new EmptyBorder(12, 22, 12, 22)
         ));
 
-        // Recherche
         JPanel recherche = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0));
         recherche.setOpaque(false);
         txtRecherche = UITheme.textField();
@@ -119,7 +116,6 @@ public class ClientView extends JFrame {
         recherche.add(UITheme.label("🔍  Rechercher par nom :"));
         recherche.add(txtRecherche);
 
-        // Boutons
         JPanel boutons = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 0));
         boutons.setOpaque(false);
         btnAjouter   = UITheme.primaryButton("Ajouter");

@@ -9,38 +9,35 @@ import javax.swing.table.JTableHeader;
 public final class UITheme {
     private UITheme() {}
 
-    // ─── PALETTE SOMBRE PROFESSIONNELLE (Anthracite & Or) ─────────────────────
-    public static final Color BG            = new Color(18, 20, 26);      // Fond général ultra-sombre
-    public static final Color BG_SECONDARY  = new Color(24, 27, 35);      // Fond légèrement plus clair
-    public static final Color CARD_BG       = new Color(30, 34, 44);      // Fond cartes
-    public static final Color CARD_HOVER    = new Color(36, 41, 54);      // Carte survolée
-    public static final Color PANEL_BG      = new Color(22, 25, 33);      // Fond panneaux
+    
+    public static final Color BG            = new Color(18, 20, 26);      
+    public static final Color BG_SECONDARY  = new Color(24, 27, 35);      
+    public static final Color CARD_BG       = new Color(30, 34, 44);      
+    public static final Color CARD_HOVER    = new Color(36, 41, 54);      
+    public static final Color PANEL_BG      = new Color(22, 25, 33);      
 
-    public static final Color PRIMARY       = new Color(196, 160, 80);    // Or chaud principal
-    public static final Color PRIMARY_DARK  = new Color(160, 125, 55);    // Or foncé (hover)
-    public static final Color PRIMARY_LIGHT = new Color(196, 160, 80, 30);// Or transparent (sélection)
-    public static final Color ACCENT        = new Color(82, 196, 175);    // Teal médical lumineux
-    public static final Color ACCENT_DARK   = new Color(55, 160, 140);    // Teal foncé
+    public static final Color PRIMARY       = new Color(196, 160, 80);    
+    public static final Color PRIMARY_DARK  = new Color(160, 125, 55);   
+    public static final Color PRIMARY_LIGHT = new Color(196, 160, 80, 30);
+    public static final Color ACCENT        = new Color(82, 196, 175);    
+    public static final Color ACCENT_DARK   = new Color(55, 160, 140);    
 
-    public static final Color SUCCESS       = new Color(72, 199, 116);    // Vert succès
-    public static final Color DANGER        = new Color(220, 80, 80);     // Rouge danger
-    public static final Color DANGER_DARK   = new Color(180, 55, 55);     // Rouge foncé
-    public static final Color WARNING       = new Color(240, 160, 40);    // Ambre warning
+    public static final Color SUCCESS       = new Color(72, 199, 116);   
+    public static final Color DANGER        = new Color(220, 80, 80);     
+    public static final Color DANGER_DARK   = new Color(180, 55, 55);     
+    public static final Color WARNING       = new Color(240, 160, 40);    
 
-    public static final Color TEXT          = new Color(230, 232, 240);   // Texte principal clair
-    public static final Color TEXT_MUTED    = new Color(130, 140, 165);   // Texte secondaire
-    public static final Color TEXT_DIM      = new Color(80, 90, 115);     // Texte tertiaire
-    public static final Color BORDER        = new Color(48, 54, 72);      // Bordure subtile
-    public static final Color BORDER_BRIGHT = new Color(70, 80, 105);     // Bordure active
-    public static final Color BORDER_FOCUS  = new Color(196, 160, 80);    // Bordure focus (or)
-    public static final Color SEPARATOR     = new Color(38, 43, 58);      // Séparateur
-
-    // Aliases compatibilité
+    public static final Color TEXT          = new Color(230, 232, 240);   
+    public static final Color TEXT_MUTED    = new Color(130, 140, 165);  
+    public static final Color TEXT_DIM      = new Color(80, 90, 115);     
+    public static final Color BORDER        = new Color(48, 54, 72);      
+    public static final Color BORDER_BRIGHT = new Color(70, 80, 105);     
+    public static final Color BORDER_FOCUS  = new Color(196, 160, 80);    
+    public static final Color SEPARATOR     = new Color(38, 43, 58);      
     public static final Color GREEN = ACCENT;
     public static final Color BLUE  = new Color(80, 130, 220);
     public static final Color RED   = DANGER;
 
-    // ─── TYPOGRAPHIE ──────────────────────────────────────────────────────────
     public static final Font H1     = new Font("Segoe UI", Font.BOLD, 22);
     public static final Font H2     = new Font("Segoe UI", Font.BOLD, 18);
     public static final Font H3     = new Font("Segoe UI", Font.BOLD, 14);
@@ -51,7 +48,6 @@ public final class UITheme {
     public static final Font MONO   = new Font("Consolas", Font.PLAIN, 13);
     public static final Font TITLE  = new Font("Georgia", Font.BOLD, 24);
 
-    // ─── BORDURES ─────────────────────────────────────────────────────────────
     public static Border cardBorder() {
         return new CompoundBorder(
             new LineBorder(BORDER, 1, true),
@@ -84,7 +80,6 @@ public final class UITheme {
         );
     }
 
-    // ─── LABELS ───────────────────────────────────────────────────────────────
     public static JLabel label(String text) {
         JLabel l = new JLabel(text);
         l.setFont(LABEL);
@@ -106,7 +101,6 @@ public final class UITheme {
         return l;
     }
 
-    // ─── CHAMPS TEXTE ─────────────────────────────────────────────────────────
     public static JTextField textField() {
         JTextField tf = new JTextField();
         tf.setFont(BODY);
@@ -128,7 +122,6 @@ public final class UITheme {
         return tf;
     }
 
-    // ─── STYLE TABLE ──────────────────────────────────────────────────────────
     public static void styleTable(JTable t) {
         t.setRowHeight(40);
         t.setFont(BODY);
@@ -142,7 +135,6 @@ public final class UITheme {
         t.setIntercellSpacing(new Dimension(0, 0));
         t.setFillsViewportHeight(true);
 
-        // Alternance de lignes sombres
         t.setDefaultRenderer(Object.class, new DefaultTableCellRenderer() {
             @Override
             public Component getTableCellRendererComponent(JTable table, Object value,
@@ -173,7 +165,6 @@ public final class UITheme {
         ((DefaultTableCellRenderer) h.getDefaultRenderer()).setHorizontalAlignment(SwingConstants.LEFT);
     }
 
-    // ─── BOUTONS ──────────────────────────────────────────────────────────────
     public static JButton primaryButton(String text) {
         return buildButton(text, PRIMARY, PRIMARY_DARK, new Color(18, 20, 26));
     }
@@ -231,7 +222,6 @@ public final class UITheme {
         return b;
     }
 
-    // Alias compatibilité
     public static JButton button(String text, Color base, Color hover) {
         return buildButton(text, base, hover, Color.WHITE);
     }
@@ -240,7 +230,6 @@ public final class UITheme {
         return button(text, base, base.darker());
     }
 
-    // ─── HEADER ───────────────────────────────────────────────────────────────
     public static JPanel createHeader(String title, String subtitle) {
         JPanel header = new JPanel(new BorderLayout());
         header.setBackground(new Color(14, 16, 22));
@@ -255,7 +244,6 @@ public final class UITheme {
         inner.setOpaque(false);
         inner.setBorder(new EmptyBorder(subtitle == null ? 20 : 14, 0, 0, 0));
 
-        // Barre dorée latérale gauche (simulée via titre avec décoration)
         JLabel titleLabel = new JLabel("  " + title);
         titleLabel.setFont(TITLE);
         titleLabel.setForeground(PRIMARY);
@@ -271,12 +259,10 @@ public final class UITheme {
             inner.add(subLabel);
         }
 
-        // Ligne accent or en bas
         JPanel accent = new JPanel();
         accent.setBackground(PRIMARY);
         accent.setPreferredSize(new Dimension(0, 2));
 
-        // Logo / badge à droite
         JLabel badge = new JLabel("PharmaPro");
         badge.setFont(new Font("Georgia", Font.ITALIC, 13));
         badge.setForeground(TEXT_DIM);
@@ -292,7 +278,6 @@ public final class UITheme {
         return header;
     }
 
-    // ─── BADGE ────────────────────────────────────────────────────────────────
     public static JLabel badge(String text, Color bg) {
         JLabel lbl = new JLabel(text);
         lbl.setFont(new Font("Segoe UI", Font.BOLD, 10));
@@ -303,17 +288,12 @@ public final class UITheme {
         return lbl;
     }
 
-    // ─── UTILITAIRES ──────────────────────────────────────────────────────────
     public static void soften(JComponent c) {
         c.setOpaque(true);
         c.setBackground(CARD_BG);
         c.setBorder(cardBorder());
     }
 
-    /**
-     * Applique le look sombre global (LookAndFeel par défaut de Swing reste,
-     * mais on force les couleurs système pour les composants natifs).
-     */
     public static void applyGlobalDefaults() {
         UIManager.put("Panel.background", BG);
         UIManager.put("OptionPane.background", CARD_BG);

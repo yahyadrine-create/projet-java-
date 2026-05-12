@@ -1,58 +1,76 @@
 package controleur;
 
-import model.Medicament;
-import model.Client;
-import dao.MedicamentDao;
-import dao.ClientDao;
+import dao.AdministrateurDao;
+import model.Administrateur;
+
 import java.sql.Connection;
 import java.util.List;
 
+/**
+ * Contrôleur (C) — seul intermédiaire entre la Vue et le DAO.
+ * La Vue ne connaît que cette classe ; elle n'accède jamais à la BDD directement.
+ */
 public class AdministrateurControle {
-    private Connection connection;
-    private MedicamentDao medDao;
-    private ClientDao clientDao;
+
+    private AdministrateurDao adminDao;
 
     public AdministrateurControle(Connection connection) {
-        this.connection = connection;
-        this.medDao = new MedicamentDao(connection);
-        this.clientDao = new ClientDao(connection);
+        this.adminDao = new AdministrateurDao(connection);
     }
 
-    /**
-     * Calcule le nombre total de médicaments en rupture de stock
-     * Utile pour les alertes sur le tableau de bord de l'administrateur
-     */
-    public int verifierAlertesStock(int seuilCritique) {
-        List<Medicament> tous = medDao.getTous();
-        int alertes = 0;
-        for (Medicament m : tous) {
-            if (m.getQuantite() <= seuilCritique) {
-                alertes++;
-            }
-        }
-        return alertes;
+    // =========================================================================
+    // CRUD — exposés à la Vue
+    // =========================================================================
+
+    public boolean creer(Administrateur admin) {
+        return adminDao.create(admin);
     }
 
-    /**
-     * Calcule la somme totale des crédits (dettes) de tous les clients
-     */
-    public double calculerTotalCredits() {
-        List<Client> clients = clientDao.getTous();
-        double total = 0;
-        for (Client c : clients) {
-            total += c.getCredit();
-        }
-        return total;
+    public List<Administrateur> getTous() {
+        return adminDao.getTous();
     }
 
-    /**
-     * Méthode pour obtenir le nombre total d'entrées dans le système
-     */
-    public int getNombreTotalMeds() {
-        return medDao.getTous().size();
+    public Administrateur getParId(int id) {
+        return adminDao.getParId(id);
     }
 
-    public int getNombreTotalClients() {
-        return clientDao.getTous().size();
+    public boolean modifier(Administrateur admin) {
+        return adminDao.update(admin);
+    }
+
+    public boolean supprimer(int id) {
+        return adminDao.delete(id);
+    }
+
+    // =========================================================================
+    // DASHBOARD — exposés à la Vue
+    // =========================================================================
+
+    public int getNombreMedicaments() {
+        return adminDao.getNombreMedicaments();
+    }
+
+    public int getNombreClients() {
+        return adminDao.getNombreClients();
+    }
+
+    public int getNombreOrdonnances() {
+        return adminDao.getNombreOrdonnances();
+    }
+
+    public double getCATotal() {
+        return adminDao.getCATotal();
+    }
+
+    public List<String[]> getTopVentes(int limit) {
+        return adminDao.getTopVentes(limit);
+    }
+
+    public List<String[]> getCAParMois() {
+        return adminDao.getCAParMois();
+    }
+
+    public Connection getConnection() {
+        return adminDao.getConnection();
     }
 }

@@ -59,7 +59,6 @@ import model.Ordonnance;
 	     try {
 	         connection.setAutoCommit(false);
 
-	         // 1. Restituer le stock
 	         try (PreparedStatement psSelect = connection.prepareStatement(sqlSelectLignes)) {
 	             psSelect.setInt(1, numOrd);
 	             ResultSet rs = psSelect.executeQuery();
@@ -72,13 +71,11 @@ import model.Ordonnance;
 	             }
 	         }
 
-	         // 2. Supprimer les lignes d'abord (contrainte FK)
 	         try (PreparedStatement psDeleteLignes = connection.prepareStatement(sqlDeleteLignes)) {
 	             psDeleteLignes.setInt(1, numOrd);
 	             psDeleteLignes.executeUpdate();
 	         }
 
-	         // 3. Supprimer l'ordonnance
 	         try (PreparedStatement psDeleteOrd = connection.prepareStatement(sqlDeleteOrd)) {
 	             psDeleteOrd.setInt(1, numOrd);
 	             psDeleteOrd.executeUpdate();

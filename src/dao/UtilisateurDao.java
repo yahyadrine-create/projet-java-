@@ -14,18 +14,14 @@ public class UtilisateurDao implements Idao<Utilisateur> {
     
     @Override
     public boolean create(Utilisateur m) {
-        // 1. Requête pour la table parente
         String sqlUser = "INSERT INTO utilisateur (cin, nom, prenom, passwd, num_tel, login, role) VALUES (?, ?, ?, ?, ?, ?, ?)";
         
-        // 2. Requêtes pour les tables de spécialisation
         String sqlAdmin = "INSERT INTO administrateur (cin) VALUES (?)";
         String sqlPhar = "INSERT INTO pharmacien (cin) VALUES (?)";
 
         try {
-            // Utilisation d'une transaction pour garantir que l'utilisateur est créé partout ou nulle part
             connection.setAutoCommit(false);
 
-            // Insertion dans la table utilisateur
             try (PreparedStatement ps = connection.prepareStatement(sqlUser)) {
                 ps.setInt(1, m.getCin());
                 ps.setString(2, m.getNom());
@@ -33,11 +29,10 @@ public class UtilisateurDao implements Idao<Utilisateur> {
                 ps.setString(4, m.getPasswd());
                 ps.setInt(5, m.getNum_tel());
                 ps.setString(6, m.getLogin());
-                ps.setString(7, m.getRole()); // Utilisation du rôle réel
+                ps.setString(7, m.getRole()); 
                 ps.executeUpdate();
             }
 
-            // Insertion obligatoire dans la table de spécialisation selon le rôle
             String role = m.getRole() == null ? "" : m.getRole().trim();
             if ("administrateur".equalsIgnoreCase(role)) {
                 try (PreparedStatement psAdmin = connection.prepareStatement(sqlAdmin)) {
@@ -53,11 +48,11 @@ public class UtilisateurDao implements Idao<Utilisateur> {
                 throw new SQLException("Rôle invalide: " + role);
             }
 
-            connection.commit(); // Validation de l'ensemble
+            connection.commit(); 
             return true;
         } catch (SQLException e) {
             try {
-                connection.rollback(); // Annulation en cas d'erreur[cite: 1]
+                connection.rollback(); 
             } catch (SQLException ex) {
                 ex.printStackTrace();
             }
@@ -74,7 +69,6 @@ public class UtilisateurDao implements Idao<Utilisateur> {
 
     @Override
     public boolean update(Utilisateur m) {
-        // Correction de votre requête SQL (virgule manquante et ordre des paramètres)[cite: 1]
         String sql = "UPDATE utilisateur SET nom=?, prenom=?, passwd=?, num_tel=?, login=?, role=? WHERE cin=?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setString(1, m.getNom());

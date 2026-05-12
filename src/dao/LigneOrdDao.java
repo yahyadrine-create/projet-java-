@@ -11,7 +11,6 @@ public class LigneOrdDao implements Idao<LigneOrd> {
         this.connection = connection;
     }
 
- // LigneOrdDao.java — méthode create() corrigée
 
     @Override
     public boolean create(LigneOrd m) {
@@ -24,24 +23,23 @@ public class LigneOrdDao implements Idao<LigneOrd> {
         try {
             connection.setAutoCommit(false);
 
-            // 1. Vérifier stock suffisant et récupérer le prix du médicament
             double prixUnitaire = 0;
             try (PreparedStatement psVerif = connection.prepareStatement(sqlVerifMed)) {
                 psVerif.setInt(1, m.getMed().getId_med());
                 ResultSet rs = psVerif.executeQuery();
                 if (!rs.next()) {
                     connection.rollback();
-                    return false; // médicament introuvable
+                    return false; 
                 }
                 int stockActuel = rs.getInt("quantite");
                 prixUnitaire = rs.getDouble("prix");
                 if (stockActuel < m.getQuantite()) {
                     connection.rollback();
-                    return false; // stock insuffisant
+                    return false; 
                 }
             }
 
-            // 2. Insérer la ligne d'ordonnance
+            
             try (PreparedStatement psInsert = connection.prepareStatement(sqlInsert)) {
                 psInsert.setInt(1, m.getOrd().getNum_ord());
                 psInsert.setInt(2, m.getMed().getId_med());
@@ -49,19 +47,18 @@ public class LigneOrdDao implements Idao<LigneOrd> {
                 psInsert.executeUpdate();
             }
 
-            // 3. Décrémenter le stock du médicament
+            
             try (PreparedStatement psStock = connection.prepareStatement(sqlUpdateStock)) {
                 psStock.setInt(1, m.getQuantite());
                 psStock.setInt(2, m.getMed().getId_med());
                 psStock.setInt(3, m.getQuantite());
                 int rows = psStock.executeUpdate();
                 if (rows == 0) {
-                    connection.rollback(); // stock insuffisant (race condition)
+                    connection.rollback(); 
                     return false;
                 }
             }
 
-            // 4. Récupérer l'id du client lié à l'ordonnance
             int idClient = -1;
             try (PreparedStatement psGetClt = connection.prepareStatement(sqlGetClient)) {
                 psGetClt.setInt(1, m.getOrd().getNum_ord());
@@ -71,7 +68,6 @@ public class LigneOrdDao implements Idao<LigneOrd> {
                 }
             }
 
-            // 5. Augmenter le crédit du client (quantité × prix)
             if (idClient != -1) {
                 double montant = m.getQuantite() * prixUnitaire;
                 try (PreparedStatement psCredit = connection.prepareStatement(sqlUpdateCredit)) {
@@ -93,19 +89,16 @@ public class LigneOrdDao implements Idao<LigneOrd> {
         }
     }
 
- // LigneOrdDao.java — méthode update() corrigée
 
     @Override
     public boolean update(LigneOrd m) {
         String sqlAncienne = "SELECT quantite FROM ligneord WHERE num_ord = ? AND id_med = ?";
         String sqlUpdate   = "UPDATE ligneord SET quantite = ? WHERE num_ord = ? AND id_med = ?";
         String sqlStock    = "UPDATE medicament SET quantite = quantite + ? WHERE id_med = ?";
-        // + diff peut être négatif (augmentation) ou positif (diminution)
 
         try {
             connection.setAutoCommit(false);
 
-            // 1. Récupérer l'ancienne quantité
             int ancienneQte = 0;
             try (PreparedStatement psAncienne = connection.prepareStatement(sqlAncienne)) {
                 psAncienne.setInt(1, m.getOrd().getNum_ord());
@@ -114,10 +107,8 @@ public class LigneOrdDao implements Idao<LigneOrd> {
                 if (rs.next()) ancienneQte = rs.getInt("quantite");
             }
 
-            // 2. Calculer la différence : positif = on rend du stock, négatif = on en prend
             int diff = ancienneQte - m.getQuantite();
 
-            // 3. Mettre à jour la ligne d'ordonnance
             try (PreparedStatement psUpdate = connection.prepareStatement(sqlUpdate)) {
                 psUpdate.setInt(1, m.getQuantite());
                 psUpdate.setInt(2, m.getOrd().getNum_ord());
@@ -125,7 +116,6 @@ public class LigneOrdDao implements Idao<LigneOrd> {
                 psUpdate.executeUpdate();
             }
 
-            // 4. Ajuster le stock (diff > 0 => on restitue, diff < 0 => on retire)
             try (PreparedStatement psStock = connection.prepareStatement(sqlStock)) {
                 psStock.setInt(1, diff);
                 psStock.setInt(2, m.getMed().getId_med());
@@ -164,16 +154,13 @@ public class LigneOrdDao implements Idao<LigneOrd> {
         return new LigneOrd(ord, med, rs.getInt("quantite"));
     }
 
-    @Override public List<LigneOrd> getTous() { return null; } // Peu utile ici
+    @Override public List<LigneOrd> getTous() { return null; } 
     @Override public LigneOrd getParId(int id) { return null; }
- // Supprimer une seule ligne et restituer son stock
     @Override
     public boolean delete(int idMed) {
-        // Peu utilisé seul, mais on l'implémente proprement
         return false;
     }
 
-    // Supprimer toutes les lignes d'une ordonnance ET restituer le stock
     public boolean deleteParOrdonnance(int numOrd) {
         String sqlSelectLignes = "SELECT id_med, quantite FROM ligneord WHERE num_ord = ?";
         String sqlRestockMed   = "UPDATE medicament SET quantite = quantite + ? WHERE id_med = ?";
@@ -182,20 +169,18 @@ public class LigneOrdDao implements Idao<LigneOrd> {
         try {
             connection.setAutoCommit(false);
 
-            // 1. Récupérer toutes les lignes pour restituer le stock
             try (PreparedStatement psSelect = connection.prepareStatement(sqlSelectLignes)) {
                 psSelect.setInt(1, numOrd);
                 ResultSet rs = psSelect.executeQuery();
                 try (PreparedStatement psRestock = connection.prepareStatement(sqlRestockMed)) {
                     while (rs.next()) {
-                        psRestock.setInt(1, rs.getInt("quantite")); // restituer
+                        psRestock.setInt(1, rs.getInt("quantite")); 
                         psRestock.setInt(2, rs.getInt("id_med"));
                         psRestock.executeUpdate();
                     }
                 }
             }
 
-            // 2. Supprimer toutes les lignes de l'ordonnance
             try (PreparedStatement psDelete = connection.prepareStatement(sqlDeleteLignes)) {
                 psDelete.setInt(1, numOrd);
                 psDelete.executeUpdate();
@@ -222,7 +207,6 @@ public class LigneOrdDao implements Idao<LigneOrd> {
         try {
             connection.setAutoCommit(false);
 
-            // 1. Récupérer la quantité et le prix pour restituer le stock et ajuster le crédit
             int qte = 0;
             double prixUnitaire = 0;
             try (PreparedStatement psSelect = connection.prepareStatement(sqlSelectQte)) {
@@ -234,25 +218,23 @@ public class LigneOrdDao implements Idao<LigneOrd> {
                     prixUnitaire = rs.getDouble("prix");
                 } else {
                     connection.rollback();
-                    return false; // ligne introuvable
+                    return false; 
                 }
             }
 
-            // 2. Supprimer la ligne
+            
             try (PreparedStatement psDelete = connection.prepareStatement(sqlDeleteLigne)) {
                 psDelete.setInt(1, numOrd);
                 psDelete.setInt(2, idMed);
                 psDelete.executeUpdate();
             }
 
-            // 3. Restituer le stock du médicament
             try (PreparedStatement psRestock = connection.prepareStatement(sqlRestock)) {
                 psRestock.setInt(1, qte);
                 psRestock.setInt(2, idMed);
                 psRestock.executeUpdate();
             }
 
-            // 4. Récupérer le client lié à l'ordonnance
             int idClient = -1;
             try (PreparedStatement psGetClt = connection.prepareStatement(sqlGetClient)) {
                 psGetClt.setInt(1, numOrd);
@@ -262,7 +244,6 @@ public class LigneOrdDao implements Idao<LigneOrd> {
                 }
             }
 
-            // 5. Diminuer le crédit du client (quantité × prix)
             if (idClient != -1) {
                 double montant = qte * prixUnitaire;
                 try (PreparedStatement psCredit = connection.prepareStatement(sqlUpdateCredit)) {

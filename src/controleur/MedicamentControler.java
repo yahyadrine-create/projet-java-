@@ -32,7 +32,6 @@ public class MedicamentControler {
         return medDao.rechercherParNom(nom);
     }
 
-    /** Retourne null si aucun médicament avec cet identifiant. */
     public Medicament trouverParId(int id) {
         return medDao.getParId(id);
     }

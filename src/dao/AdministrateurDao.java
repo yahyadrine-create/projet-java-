@@ -7,10 +7,7 @@ import java.util.List;
 import model.Administrateur;
 import model.Utilisateur;
 
-/**
- * DAO (accès données) — toutes les requêtes SQL sont ici.
- * Ni logique métier, ni composants graphiques.
- */
+
 public class AdministrateurDao implements Idao<Administrateur> {
 
     private Connection connection;
@@ -19,10 +16,7 @@ public class AdministrateurDao implements Idao<Administrateur> {
         this.connection = connection;
     }
 
-    // =========================================================================
-    // CRUD
-    // =========================================================================
-
+   
     @Override
     public boolean create(Administrateur m) {
         String sqlUser =
@@ -144,10 +138,7 @@ public class AdministrateurDao implements Idao<Administrateur> {
         return null;
     }
 
-    // =========================================================================
-    // DASHBOARD — toutes les requêtes de statistiques sont ici (plus dans la Vue)
-    // =========================================================================
-
+    
     public int getNombreMedicaments() {
         return queryInt("SELECT COUNT(*) FROM medicament");
     }
@@ -190,10 +181,7 @@ public class AdministrateurDao implements Idao<Administrateur> {
         return list;
     }
 
-    /**
-     * CA par mois sur les 12 derniers mois.
-     * Si aucun résultat, bascule automatiquement sur le fallback sans filtre date.
-     */
+    
     public List<String[]> getCAParMois() {
         List<String[]> list = new ArrayList<>();
         String sql =
@@ -212,7 +200,7 @@ public class AdministrateurDao implements Idao<Administrateur> {
             while (rs.next()) {
                 list.add(new String[]{ rs.getString("mois_label"), String.valueOf(rs.getDouble("ca")) });
             }
-            // Fallback : si aucune donnée dans les 12 derniers mois
+           
             if (list.isEmpty()) {
                 list.addAll(getCAParMoisSansFiltreDate());
             }
@@ -223,7 +211,7 @@ public class AdministrateurDao implements Idao<Administrateur> {
         return list;
     }
 
-    /** Fallback — toutes les données sans filtre de date (limité à 12 mois) */
+   
     private List<String[]> getCAParMoisSansFiltreDate() {
         List<String[]> list = new ArrayList<>();
         String sql =
@@ -266,7 +254,6 @@ public class AdministrateurDao implements Idao<Administrateur> {
         return 0;
     }
 
-    /** Expose la connection pour les vues filles (usage limité). */
     public Connection getConnection() { return connection; }
 
     private Administrateur mapper(ResultSet rs) throws SQLException {

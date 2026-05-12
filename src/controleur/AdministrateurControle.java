@@ -6,10 +6,6 @@ import model.Administrateur;
 import java.sql.Connection;
 import java.util.List;
 
-/**
- * Contrôleur (C) — seul intermédiaire entre la Vue et le DAO.
- * La Vue ne connaît que cette classe ; elle n'accède jamais à la BDD directement.
- */
 public class AdministrateurControle {
 
     private AdministrateurDao adminDao;
@@ -18,10 +14,7 @@ public class AdministrateurControle {
         this.adminDao = new AdministrateurDao(connection);
     }
 
-    // =========================================================================
-    // CRUD — exposés à la Vue
-    // =========================================================================
-
+   
     public boolean creer(Administrateur admin) {
         return adminDao.create(admin);
     }
@@ -42,9 +35,7 @@ public class AdministrateurControle {
         return adminDao.delete(id);
     }
 
-    // =========================================================================
-    // DASHBOARD — exposés à la Vue
-    // =========================================================================
+    
 
     public int getNombreMedicaments() {
         return adminDao.getNombreMedicaments();

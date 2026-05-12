@@ -15,15 +15,12 @@ public class PharmacienDao implements Idao<Pharmacien> {
 
     @Override
     public boolean create(Pharmacien p) {
-        // Requêtes pour les deux tables : utilisateur et pharmacien
         String sqlUser = "INSERT INTO utilisateur (cin, nom, prenom, num_tel, login, password, role) VALUES (?, ?, ?, ?, ?, ?, ?)";
         String sqlPhar = "INSERT INTO pharmacien (cin) VALUES (?)";
 
         try {
-            // Utilisation d'une transaction pour garantir l'intégrité des données
             connection.setAutoCommit(false);
 
-            // 1. Insertion dans la table utilisateur
             try (PreparedStatement psUser = connection.prepareStatement(sqlUser)) {
                 psUser.setInt(1, p.getUlt().getCin());
                 psUser.setString(2, p.getUlt().getNom());
@@ -31,22 +28,21 @@ public class PharmacienDao implements Idao<Pharmacien> {
                 psUser.setInt(4, p.getUlt().getNum_tel());
                 psUser.setString(5, p.getUlt().getLogin());
                 psUser.setString(6, p.getUlt().getPasswd());
-                psUser.setString(7, "pharmacien"); // On fixe le rôle à pharmacien[cite: 1]
+                psUser.setString(7, "pharmacien"); 
                 psUser.executeUpdate();
             }
 
-            // 2. Insertion dans la table pharmacien (similaire à image_48ef39.png)[cite: 1]
             try (PreparedStatement psPhar = connection.prepareStatement(sqlPhar)) {
                 psPhar.setInt(1, p.getUlt().getCin());
                 psPhar.executeUpdate();
             }
 
-            connection.commit(); // Validation de la transaction[cite: 1]
+            connection.commit(); 
             return true;
 
         } catch (SQLException e) {
             try {
-                connection.rollback(); // Annulation en cas d'erreur[cite: 1]
+                connection.rollback(); 
             } catch (SQLException ex) {
                 ex.printStackTrace();
             }
@@ -64,7 +60,6 @@ public class PharmacienDao implements Idao<Pharmacien> {
     @Override
     public List<Pharmacien> getTous() {
         List<Pharmacien> liste = new ArrayList<>();
-        // Jointure pour récupérer les infos de l'utilisateur qui sont des pharmaciens[cite: 1]
         String sql = "SELECT u.* FROM utilisateur u " +
                      "JOIN pharmacien p ON u.cin = p.cin " +
                      "WHERE u.role = 'pharmacien'";
@@ -81,7 +76,6 @@ public class PharmacienDao implements Idao<Pharmacien> {
 
     @Override
     public boolean update(Pharmacien p) {
-        // Mise à jour des informations dans la table utilisateur[cite: 1]
         String sql = "UPDATE utilisateur SET nom=?, prenom=?, num_tel=?, login=? WHERE cin=?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setString(1, p.getUlt().getNom());
@@ -98,7 +92,6 @@ public class PharmacienDao implements Idao<Pharmacien> {
 
     @Override
     public boolean delete(int id) {
-        // Suppression dans les deux tables (pharmacien puis utilisateur)[cite: 1]
         String sqlPhar = "DELETE FROM pharmacien WHERE cin = ?";
         String sqlUser = "DELETE FROM utilisateur WHERE cin = ?";
         try {
